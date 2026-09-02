@@ -1,0 +1,19 @@
+name: WorldBorder
+main: net.tfminecraft.worldborder.WorldBorder
+version: 0.1.0
+api-version: '1.21'
+author: Drefvelin
+
+commands:
+  worldborder:
+    description: WorldBorder admin commands
+    usage: /worldborder <reload|debug>
+    permission: worldborder.admin
+
+permissions:
+  worldborder.admin:
+    description: Reload config and run debug commands
+    default: op
+  worldborder.bypass:
+    description: Ignore border damage and warnings
+    default: false

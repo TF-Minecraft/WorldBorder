@@ -1,0 +1,19 @@
+# Border tick settings (used from Batch 3)
+tick-interval-ticks: 10
+damage: 8.0
+grace-inset: 20
+
+title-warning: "§cApproaching world border"
+subtitle-warning: "§cTurn back"
+
+# Worlds this plugin applies to. Empty = all worlds.
+worlds: []
+
+# Per-world square border (block coords, inclusive).
+# Outside these X/Z bounds: damage. Within grace-inset of edge: warning.
+borders:
+  # example_world:
+  #   min-x: 0
+  #   max-x: 0
+  #   min-z: 0
+  #   max-z: 0

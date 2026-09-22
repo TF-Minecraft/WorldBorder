@@ -38,6 +38,6 @@
             </resource>
         </resources>
         <plugins>
-</plugins>
+        </plugins>
     </build>
 </project>

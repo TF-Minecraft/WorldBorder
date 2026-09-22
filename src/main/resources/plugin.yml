@@ -1,7 +1,7 @@
 name: WorldBorder
 main: net.tfminecraft.worldborder.WorldBorder
 version: ${project.version}
-api-version: '1.21'
+api-version: '1.21.10'
 author: Drefvelin
 
 commands:

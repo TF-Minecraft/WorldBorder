@@ -38,6 +38,8 @@ public final class BorderManager {
         warningShown.clear();
     }
 
+    // Keep the existing legacy text representation, formatting, and exact-string comparisons.
+    @SuppressWarnings("deprecation")
     private void tick() {
         pruneOfflineWarnings();
 

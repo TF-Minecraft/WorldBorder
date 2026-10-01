@@ -3,8 +3,8 @@ tick-interval-ticks: 10
 damage: 8.0
 grace-inset: 20
 
-title-warning: "§cApproaching world border"
-subtitle-warning: "§cTurn back"
+title-warning: "§cTurn back"
+subtitle-warning: "§cYou feel continuing further would be very dangerous..."
 
 # Worlds this plugin applies to. Empty = all worlds.
 worlds: []

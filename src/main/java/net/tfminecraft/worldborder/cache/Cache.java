@@ -17,8 +17,8 @@ public final class Cache {
     public static int tickIntervalTicks = 10;
     public static double damage = 8.0;
     public static int graceInset = 20;
-    public static String titleWarning = "§cApproaching world border";
-    public static String subtitleWarning = "§cTurn back";
+    public static String titleWarning = "§cTurn back";
+    public static String subtitleWarning = "§cYou feel continuing further would be very dangerous...";
 
     /**
      * When empty, borders apply to any world with an entry in {@link #borders}.

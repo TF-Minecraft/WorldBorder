@@ -24,8 +24,13 @@ Technical documentation is maintained in [TF-Minecraft/Docs](https://github.com/
 
 ## Tests and coverage
 
-Run `mvn clean verify` with Java 21 and the pinned plugin dependencies installed.
-The build runs the tests and enforces **100% executable-line coverage** across
+Run `mvn clean verify` with Java 21. JUnit 5, Mockito and MockBukkit exercise
+border zones, warnings, damage, permissions, configuration, commands and plugin
+lifecycle. No private plugin JARs are needed. Surefire writes test results to
+`target/surefire-reports/`; the Build workflow uploads them. These tests do not
+start a live Paper server or verify client title rendering.
+
+The build enforces **100% executable-line coverage** across
 all production Java classes, with no coverage exclusions. JaCoCo's HTML and XML
 reports are written to `target/site/jacoco/` and uploaded by the Build workflow.
 Branch and instruction coverage are reported separately; the enforced threshold

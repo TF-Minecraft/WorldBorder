@@ -19,6 +19,11 @@ public final class Cache {
     public static int graceInset = 20;
     public static String titleWarning = "§cTurn back";
     public static String subtitleWarning = "§cYou feel continuing further would be very dangerous...";
+    /**
+     * Fastest a player can travel, in blocks per second. Only used to warn when a
+     * lethal band is narrow enough to cross between two border checks.
+     */
+    public static double maxTravelSpeed = 100.0;
 
     /**
      * When empty, borders apply to any world with an entry in {@link #borders}.

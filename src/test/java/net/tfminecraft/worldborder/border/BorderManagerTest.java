@@ -263,6 +263,51 @@ class BorderManagerTest {
         verify(alive).damage(3.5);
     }
 
+    @Test
+    void lethalBandKillsOutrightAndClearsTheWarning() {
+        Cache.borders.put("overworld", new Region("overworld", 0, 100, 0, 100, 50, 500));
+        Player player = playerAt(5, 50);
+        tick();
+
+        move(player, 120, 50);
+        tick();
+        verify(player).damage(3.5);
+        verify(player, never()).setHealth(anyDouble());
+
+        move(player, 150, 50);
+        tick();
+        verify(player).setHealth(0);
+        verify(player, times(1)).damage(anyDouble());
+        verify(player, times(1)).resetTitle();
+    }
+
+    @Test
+    void beyondTheBufferNothingHappensAndAnExistingWarningIsCleared() {
+        Cache.borders.put("overworld", new Region("overworld", 0, 100, 0, 100, 50, 500));
+        Player player = playerAt(5, 50);
+        tick();
+
+        move(player, 50, 700);
+        tick();
+        tick();
+        verify(player, times(1)).resetTitle();
+        verify(player, never()).damage(anyDouble());
+        verify(player, never()).setHealth(anyDouble());
+    }
+
+    @Test
+    void exemptPlayersAreNeverKilledInTheLethalBand() {
+        Cache.borders.put("overworld", new Region("overworld", 0, 100, 0, 100, 0, 500));
+        Player bypass = playerAt(200, 50);
+        when(bypass.hasPermission("worldborder.bypass")).thenReturn(true);
+        Player creative = playerAt(200, 50);
+        when(creative.getGameMode()).thenReturn(GameMode.CREATIVE);
+
+        tick();
+        verify(bypass, never()).setHealth(anyDouble());
+        verify(creative, never()).setHealth(anyDouble());
+    }
+
     private Player playerAt(double x, double z) {
         Player player = mock(Player.class);
         UUID id = UUID.randomUUID();

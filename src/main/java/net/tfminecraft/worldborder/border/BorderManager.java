@@ -80,7 +80,13 @@ public final class BorderManager {
                             15,
                             0);
                 }
-                case SAFE -> clearWarning(player);
+                case LETHAL -> {
+                    clearWarning(player);
+                    // Health straight to zero: no damage event, so armour, totems and
+                    // plugins that cancel damage can't carry anyone across the band.
+                    player.setHealth(0);
+                }
+                case SAFE, BEYOND -> clearWarning(player);
             }
         }
     }

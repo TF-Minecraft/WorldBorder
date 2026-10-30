@@ -29,6 +29,7 @@ class ConfigLoaderTest {
     private int previousInset;
     private String previousTitle;
     private String previousSubtitle;
+    private double previousMaxTravelSpeed;
     private List<String> previousWorlds;
     private java.util.Map<String, Region> previousBorders;
 
@@ -40,6 +41,7 @@ class ConfigLoaderTest {
         previousInset = Cache.graceInset;
         previousTitle = Cache.titleWarning;
         previousSubtitle = Cache.subtitleWarning;
+        previousMaxTravelSpeed = Cache.maxTravelSpeed;
         previousWorlds = Cache.worlds;
         previousBorders = Cache.borders;
         WorldBorder.plugin = mock(WorldBorder.class);
@@ -60,6 +62,7 @@ class ConfigLoaderTest {
         Cache.graceInset = previousInset;
         Cache.titleWarning = previousTitle;
         Cache.subtitleWarning = previousSubtitle;
+        Cache.maxTravelSpeed = previousMaxTravelSpeed;
         Cache.worlds = previousWorlds;
         Cache.borders = previousBorders;
     }
@@ -78,6 +81,7 @@ class ConfigLoaderTest {
         assertEquals(20, Cache.graceInset);
         assertEquals("default title", Cache.titleWarning);
         assertEquals("default subtitle", Cache.subtitleWarning);
+        assertEquals(100.0, Cache.maxTravelSpeed);
         assertTrue(Cache.worlds.isEmpty());
         assertTrue(Cache.borders.isEmpty());
     }
@@ -108,6 +112,8 @@ class ConfigLoaderTest {
         assertEquals(20, border.maxX);
         assertEquals(-30, border.minZ);
         assertEquals(40, border.maxZ);
+        assertEquals(Region.NO_LETHAL_DEPTH, border.lethalDepth);
+        assertEquals(Region.ENDLESS_BUFFER, border.bufferWidth);
         Region point = Cache.borders.get("point");
         assertEquals(Region.Zone.WARNING, point.zoneAt(1, 2, 0));
         verifyNoInteractions(logger);
@@ -130,6 +136,56 @@ class ConfigLoaderTest {
         assertEquals(List.of("valid"), new ArrayList<>(Cache.borders.keySet()));
         verify(logger).warning(contains("world 'bad-x'"));
         verify(logger).warning(contains("world 'bad-z'"));
+    }
+
+    @Test
+    void loadsBufferSettingsPerWorld() throws Exception {
+        load("""
+                tick-interval-ticks: 20
+                max-travel-speed: 50
+                borders:
+                  map: {min-x: 200, max-x: 6200, min-z: 200, max-z: 6200, lethal-depth: 100, buffer-width: 1000}
+                  endless: {min-x: 0, max-x: 1, min-z: 0, max-z: 1, lethal-depth: 0}
+                """);
+        assertEquals(50.0, Cache.maxTravelSpeed);
+        Region map = Cache.borders.get("map");
+        assertEquals(100, map.lethalDepth);
+        assertEquals(1000, map.bufferWidth);
+        Region endless = Cache.borders.get("endless");
+        assertEquals(0, endless.lethalDepth);
+        assertEquals(Region.ENDLESS_BUFFER, endless.bufferWidth);
+        verifyNoInteractions(logger);
+    }
+
+    @Test
+    void clampsNegativeBufferSettingsToDisabled() throws Exception {
+        load("""
+                max-travel-speed: -5
+                borders:
+                  map: {min-x: 0, max-x: 1, min-z: 0, max-z: 1, lethal-depth: -7, buffer-width: -3}
+                """);
+        assertEquals(0.0, Cache.maxTravelSpeed);
+        Region map = Cache.borders.get("map");
+        assertEquals(Region.NO_LETHAL_DEPTH, map.lethalDepth);
+        assertEquals(Region.ENDLESS_BUFFER, map.bufferWidth);
+        verifyNoInteractions(logger);
+    }
+
+    @Test
+    void warnsWhenTheBufferCanBeCrossed() throws Exception {
+        load("""
+                tick-interval-ticks: 20
+                max-travel-speed: 100
+                borders:
+                  no-lethal: {min-x: 0, max-x: 1, min-z: 0, max-z: 1, buffer-width: 500}
+                  narrow: {min-x: 0, max-x: 1, min-z: 0, max-z: 1, lethal-depth: 450, buffer-width: 500}
+                  exact: {min-x: 0, max-x: 1, min-z: 0, max-z: 1, lethal-depth: 400, buffer-width: 500}
+                """);
+        assertEquals(List.of("no-lethal", "narrow", "exact"), new ArrayList<>(Cache.borders.keySet()));
+        verify(logger).warning(contains("world 'no-lethal' has buffer-width 500 but no lethal-depth"));
+        verify(logger).warning(contains("world 'narrow' has a lethal band of 50.0 blocks"));
+        verify(logger).warning(contains("it needs at least 100.0 blocks"));
+        verify(logger, never()).warning(contains("'exact'"));
     }
 
     @Test

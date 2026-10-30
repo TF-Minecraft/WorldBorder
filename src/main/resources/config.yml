@@ -6,14 +6,31 @@ grace-inset: 20
 title-warning: "§cTurn back"
 subtitle-warning: "§cYou feel continuing further would be very dangerous..."
 
+# Fastest a player can travel (elytra, vehicles), in blocks per second.
+# Only used to log a warning when a lethal band is too narrow to be
+# noticed between two border checks (band < speed * tick-interval-ticks / 20).
+max-travel-speed: 100.0
+
 # Worlds this plugin applies to. Empty = all worlds.
 worlds: []
 
 # Per-world square border (block coords, inclusive).
 # Outside these X/Z bounds: damage. Within grace-inset of edge: warning.
+#
+# Optional buffer, in blocks past the edge (furthest axis, so bands are square):
+#   lethal-depth: from this far out, players are killed outright (no armour,
+#                 totem or damage-cancelling plugin saves them).
+#                 Leave out or set negative for no lethal band.
+#   buffer-width: past this far out nothing happens, so builds out there are
+#                 safe for players teleported to them. Leave out or 0 for no
+#                 outer limit (the border reaches out forever).
+# Keep the lethal band (buffer-width - lethal-depth) wide, so no one can fly
+# across it between checks.
 borders:
   # example_world:
   #   min-x: 0
   #   max-x: 0
   #   min-z: 0
   #   max-z: 0
+  #   lethal-depth: 100
+  #   buffer-width: 1000

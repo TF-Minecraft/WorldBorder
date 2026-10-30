@@ -28,9 +28,18 @@ public final class RespawnGuard implements Listener {
         if (region == null || region.zoneAt(to.getX(), to.getZ(), Cache.graceInset) != Region.Zone.LETHAL) {
             return;
         }
-        event.setRespawnLocation(world.getSpawnLocation());
+        Location safe = world.getSpawnLocation();
+        String where = "the spawn of " + world.getName();
+        if (region.zoneAt(safe.getX(), safe.getZ(), Cache.graceInset) == Region.Zone.LETHAL) {
+            // The world spawn is out in the band too, so use the middle of the border.
+            int x = (int) Math.floorDiv((long) region.minX + region.maxX, 2L);
+            int z = (int) Math.floorDiv((long) region.minZ + region.maxZ, 2L);
+            safe = new Location(world, x + 0.5, world.getHighestBlockYAt(x, z) + 1, z + 0.5);
+            where = "the centre of the " + world.getName() + " border";
+        }
+        event.setRespawnLocation(safe);
         WorldBorder.plugin.getLogger().info("Moved " + event.getPlayer().getName()
                 + "'s respawn out of the lethal band (" + to.getBlockX() + ", " + to.getBlockZ()
-                + ") to the spawn of " + world.getName() + ".");
+                + ") to " + where + ".");
     }
 }

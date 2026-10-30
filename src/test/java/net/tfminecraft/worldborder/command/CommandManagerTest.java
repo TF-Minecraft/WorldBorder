@@ -198,6 +198,21 @@ class CommandManagerTest {
 
     @ParameterizedTest
     @CsvSource({
+            "200, 100, 'no lethal band, ends 100 blocks out'",
+            "100, 100, 'lethal from 100 blocks out, ends 100 blocks out'",
+            "0, 0, 'lethal from 0 blocks out, no outer limit'"
+    })
+    void debugOnlyDescribesALethalBandThatCanHappen(int lethalDepth, int bufferWidth, String buffer) {
+        Cache.borders.put("world", new Region("world", -100, 100, -100, 100, lethalDepth, bufferWidth));
+        Player player = player("world", 0, 0);
+
+        assertTrue(execute(player, "debug"));
+
+        verify(player).sendMessage("§7Buffer: §f" + buffer);
+    }
+
+    @ParameterizedTest
+    @CsvSource({
             "150, '§cOUTSIDE'",
             "160, '§4LETHAL'",
             "300, '§4LETHAL'",

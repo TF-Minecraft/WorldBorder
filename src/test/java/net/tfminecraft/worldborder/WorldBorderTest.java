@@ -1,6 +1,13 @@
 package net.tfminecraft.worldborder;
 
+import net.tfminecraft.worldborder.border.Region;
 import net.tfminecraft.worldborder.cache.Cache;
+import org.bukkit.GameMode;
+import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.event.player.PlayerRespawnEvent.RespawnReason;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -56,6 +63,22 @@ class WorldBorderTest {
         assertSame(plugin.getCommand("worldborder").getExecutor(),
                 plugin.getCommand("worldborder").getTabCompleter());
         server.getScheduler().performTicks(10);
+    }
+
+    @Test
+    void registeredRespawnGuardMovesLethalRespawnsToTheWorldSpawn() {
+        World world = server.addSimpleWorld("map");
+        world.setSpawnLocation(50, 64, 50);
+        Cache.borders.put("map", new Region("map", 0, 100, 0, 100, 50, 500));
+        Player player = server.addPlayer();
+        player.setGameMode(GameMode.SURVIVAL);
+        PlayerRespawnEvent event = new PlayerRespawnEvent(
+                player, new Location(world, 300, 64, 50), false, false, false,
+                RespawnReason.DEATH);
+
+        server.getPluginManager().callEvent(event);
+
+        assertEquals(world.getSpawnLocation(), event.getRespawnLocation());
     }
 
     @Test

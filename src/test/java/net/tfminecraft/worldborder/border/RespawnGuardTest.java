@@ -83,6 +83,32 @@ class RespawnGuardTest {
         verify(logger).info("Moved Wanderer's respawn out of the lethal band (300, 50) to the spawn of map.");
     }
 
+    @Test
+    void lethalWorldSpawnFallsBackToTheMiddleOfTheBorder() {
+        when(world.getSpawnLocation()).thenReturn(new Location(world, 300, 64, 50));
+        when(world.getHighestBlockYAt(50, 50)).thenReturn(70);
+        PlayerRespawnEvent event = respawnAt(new Location(world, 300, 64, 50));
+
+        guard.onRespawn(event);
+
+        verify(event).setRespawnLocation(new Location(world, 50.5, 71, 50.5));
+        verify(logger).info("Moved Wanderer's respawn out of the lethal band (300, 50) to the centre of the map border.");
+    }
+
+    @Test
+    void middleOfAnExtremeBorderDoesNotOverflow() {
+        Cache.borders.put("map", new Region("map", Integer.MAX_VALUE - 10, Integer.MAX_VALUE,
+                Integer.MAX_VALUE - 10, Integer.MAX_VALUE, 0, Region.ENDLESS_BUFFER));
+        when(world.getSpawnLocation()).thenReturn(new Location(world, 0, 64, 0));
+        int middle = Integer.MAX_VALUE - 5;
+        when(world.getHighestBlockYAt(middle, middle)).thenReturn(10);
+        PlayerRespawnEvent event = respawnAt(new Location(world, 0, 64, 0));
+
+        guard.onRespawn(event);
+
+        verify(event).setRespawnLocation(new Location(world, middle + 0.5, 11, middle + 0.5));
+    }
+
     @ParameterizedTest
     @ValueSource(doubles = {50, 5, 120, 700})
     void respawnOutsideTheLethalBandIsLeftAlone(double x) {

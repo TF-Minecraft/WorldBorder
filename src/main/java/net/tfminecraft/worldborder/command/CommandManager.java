@@ -72,9 +72,11 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
     }
 
     private static String describeBuffer(Region region) {
-        String lethal = region.lethalDepth == Region.NO_LETHAL_DEPTH
-                ? "no lethal band"
-                : "lethal from " + region.lethalDepth + " blocks out";
+        boolean lethalBand = region.lethalDepth != Region.NO_LETHAL_DEPTH
+                && (region.bufferWidth == Region.ENDLESS_BUFFER || region.lethalDepth <= region.bufferWidth);
+        String lethal = lethalBand
+                ? "lethal from " + region.lethalDepth + " blocks out"
+                : "no lethal band";
         String end = region.bufferWidth == Region.ENDLESS_BUFFER
                 ? "no outer limit"
                 : "ends " + region.bufferWidth + " blocks out";

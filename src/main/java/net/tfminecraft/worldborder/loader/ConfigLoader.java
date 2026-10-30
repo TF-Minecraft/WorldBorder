@@ -29,7 +29,7 @@ public final class ConfigLoader {
         Cache.graceInset = Math.max(0, config.getInt("grace-inset", 20));
         Cache.titleWarning = config.getString("title-warning", Cache.titleWarning);
         Cache.subtitleWarning = config.getString("subtitle-warning", Cache.subtitleWarning);
-        Cache.maxTravelSpeed = Math.max(0.0, config.getDouble("max-travel-speed", 100.0));
+        Cache.maxTravelSpeed = Math.max(0.0, config.getDouble("max-travel-speed", 350.0));
 
         Cache.worlds = new java.util.ArrayList<>(config.getStringList("worlds"));
 

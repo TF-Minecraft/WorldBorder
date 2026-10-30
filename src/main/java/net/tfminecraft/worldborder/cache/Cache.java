@@ -21,9 +21,11 @@ public final class Cache {
     public static String subtitleWarning = "§cYou feel continuing further would be very dangerous...";
     /**
      * Fastest a player can travel, in blocks per second. Only used to warn when a
-     * lethal band is narrow enough to cross between two border checks.
+     * lethal band is narrow enough to cross between two border checks. The default
+     * is roughly the most the server's movement check accepts from an elytra flight
+     * (about 17 blocks a tick), well above anything legitimate.
      */
-    public static double maxTravelSpeed = 100.0;
+    public static double maxTravelSpeed = 350.0;
 
     /**
      * When empty, borders apply to any world with an entry in {@link #borders}.

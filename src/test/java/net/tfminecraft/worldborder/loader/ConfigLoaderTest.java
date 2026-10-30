@@ -81,7 +81,7 @@ class ConfigLoaderTest {
         assertEquals(20, Cache.graceInset);
         assertEquals("default title", Cache.titleWarning);
         assertEquals("default subtitle", Cache.subtitleWarning);
-        assertEquals(100.0, Cache.maxTravelSpeed);
+        assertEquals(350.0, Cache.maxTravelSpeed);
         assertTrue(Cache.worlds.isEmpty());
         assertTrue(Cache.borders.isEmpty());
     }

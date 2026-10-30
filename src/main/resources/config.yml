@@ -6,10 +6,12 @@ grace-inset: 20
 title-warning: "§cTurn back"
 subtitle-warning: "§cYou feel continuing further would be very dangerous..."
 
-# Fastest a player can travel (elytra, vehicles), in blocks per second.
-# Only used to log a warning when a lethal band is too narrow to be
-# noticed between two border checks (band < speed * tick-interval-ticks / 20).
-max-travel-speed: 100.0
+# Fastest a player can travel, in blocks per second. Only used to log a
+# warning when a lethal band is too narrow to be noticed between two border
+# checks (band < speed * tick-interval-ticks / 20). 350 is roughly the most the
+# server's movement check accepts from an elytra flight (about 17 blocks a tick);
+# real elytra flight is about 35-70 and vehicles about 25.
+max-travel-speed: 350.0
 
 # Worlds this plugin applies to. Empty = all worlds.
 worlds: []

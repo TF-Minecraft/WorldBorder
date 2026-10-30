@@ -189,6 +189,16 @@ class ConfigLoaderTest {
     }
 
     @Test
+    void warnsWhenLethalDepthIsPastBufferWidthEvenWithoutASpeed() throws Exception {
+        load("""
+                max-travel-speed: 0
+                borders:
+                  inverted: {min-x: 0, max-x: 1, min-z: 0, max-z: 1, lethal-depth: 200, buffer-width: 100}
+                """);
+        verify(logger).warning(contains("world 'inverted' has lethal-depth 200 past buffer-width 100"));
+    }
+
+    @Test
     void missingFileLeavesActiveConfigurationUntouched() {
         Cache.tickIntervalTicks = 37;
         loader.load(directory.resolve("missing.yml").toFile());

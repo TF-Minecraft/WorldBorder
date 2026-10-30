@@ -22,8 +22,9 @@ public final class Cache {
     /**
      * Fastest a player can travel, in blocks per second. Only used to warn when a
      * lethal band is narrow enough to cross between two border checks. The default
-     * is roughly the most the server's movement check accepts from an elytra flight
-     * (about 17 blocks a tick), well above anything legitimate.
+     * is roughly the most the server's movement check normally accepts from an elytra
+     * flight (about 17 blocks a tick). It is a guideline, not a hard limit: lag or a
+     * client that holds back packets can move further, so keep bands well above it.
      */
     public static double maxTravelSpeed = 350.0;
 

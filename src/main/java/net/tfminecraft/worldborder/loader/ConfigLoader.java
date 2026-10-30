@@ -77,6 +77,13 @@ public final class ConfigLoader {
                             + " but no lethal-depth: anyone who survives the damage can cross the buffer.");
             return;
         }
+        if (region.lethalDepth > region.bufferWidth) {
+            WorldBorder.plugin.getLogger().warning(
+                    "Border for world '" + region.world + "' has lethal-depth " + region.lethalDepth
+                            + " past buffer-width " + region.bufferWidth
+                            + ", so there is no lethal band: anyone who survives the damage can cross the buffer.");
+            return;
+        }
         double minimum = Cache.maxTravelSpeed * Cache.tickIntervalTicks / 20.0;
         if (region.lethalBandWidth() < minimum) {
             WorldBorder.plugin.getLogger().warning(

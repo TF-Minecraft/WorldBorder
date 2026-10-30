@@ -9,8 +9,10 @@ subtitle-warning: "§cYou feel continuing further would be very dangerous..."
 # Fastest a player can travel, in blocks per second. Only used to log a
 # warning when a lethal band is too narrow to be noticed between two border
 # checks (band < speed * tick-interval-ticks / 20). 350 is roughly the most the
-# server's movement check accepts from an elytra flight (about 17 blocks a tick);
-# real elytra flight is about 35-70 and vehicles about 25.
+# server's movement check normally accepts from an elytra flight (about 17 blocks
+# a tick); real elytra flight is about 35-70 and vehicles about 25. It is a
+# guideline, not a hard limit (lag or a client holding back packets can go
+# further), so keep the lethal band well above it.
 max-travel-speed: 350.0
 
 # Worlds this plugin applies to. Empty = all worlds.
@@ -27,7 +29,9 @@ worlds: []
 #                 safe for players teleported to them. Leave out or 0 for no
 #                 outer limit (the border reaches out forever).
 # Keep the lethal band (buffer-width - lethal-depth) wide, so no one can fly
-# across it between checks.
+# across it between checks. Ender pearls, chorus fruit and portals can't land
+# a player in the lethal band or past the buffer (unless they are already past
+# it); staff and plugin teleports can.
 borders:
   # example_world:
   #   min-x: 0

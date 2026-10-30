@@ -7,6 +7,7 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.never;
@@ -274,11 +275,32 @@ class BorderManagerTest {
         verify(player).damage(3.5);
         verify(player, never()).setHealth(anyDouble());
 
+        doAnswer(invocation -> {
+            when(player.isDead()).thenReturn(true);
+            return null;
+        }).when(player).setHealth(0);
         move(player, 150, 50);
         tick();
         verify(player).setHealth(0);
         verify(player, times(1)).damage(anyDouble());
         verify(player, times(1)).resetTitle();
+        verify(player, never()).teleport(any(Location.class));
+    }
+
+    @Test
+    void cancelledDeathInTheLethalBandMovesThePlayerToTheWorldSpawn() {
+        Cache.borders.put("overworld", new Region("overworld", 0, 100, 0, 100, 50, 500));
+        Location spawn = new Location(world, 50, 64, 50);
+        when(world.getSpawnLocation()).thenReturn(spawn);
+        Player player = playerAt(150, 50);
+        when(player.getName()).thenReturn("Revived");
+
+        tick();
+
+        verify(player).setHealth(0);
+        verify(player).teleport(spawn);
+        verify(plugin.getLogger()).info(
+                "Moved Revived out of the lethal band to the spawn of overworld after their death was cancelled.");
     }
 
     @Test

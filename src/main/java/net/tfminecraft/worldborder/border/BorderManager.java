@@ -108,7 +108,7 @@ public final class BorderManager {
         }
     }
 
-    private boolean affects(Player player) {
+    static boolean affects(Player player) {
         GameMode mode = player.getGameMode();
         if (mode != GameMode.SURVIVAL && mode != GameMode.ADVENTURE) {
             return false;

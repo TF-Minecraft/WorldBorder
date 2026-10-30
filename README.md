@@ -11,7 +11,7 @@ Each covered world can have its own boundary, allowing the playable space to fol
 - **Per-world boundaries** — rectangular regions define the playable area in each covered world.
 - **Advance warnings** — on-screen titles alert players while they are still inside the border's warning zone.
 - **Out-of-bounds damage** — players beyond the region take repeated damage until they return.
-- **Lethal buffer** — optionally, players further out are killed outright, and past the buffer nothing happens, so builds far from the map are safe for players teleported to them while no one can walk, ride or fly there.
+- **Lethal buffer** — optionally, players further out are killed outright, and past the buffer nothing happens, so builds far from the map are safe for players teleported to them while no one can walk, ride or fly there. Respawn points inside the lethal band send players to the world spawn instead.
 - **Gameplay-aware enforcement** — survival and adventure players are affected, with creative and spectator modes exempt.
 - **Staff bypass** — a permission allows authorized players to cross the boundary without warnings or damage.
 

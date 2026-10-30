@@ -20,6 +20,8 @@ import net.tfminecraft.worldborder.cache.Cache;
  * (an ender pearl cannon, chorus fruit, a portal) would never be seen inside it. Teleports
  * players set off themselves can't land in the lethal band or past the buffer; staff and
  * plugin teleports (COMMAND, PLUGIN) still can, which is how players reach far builds.
+ * Leaving the End (END_PORTAL) is left alone: it only goes to a bed or the world spawn, and
+ * a bed past the buffer means the player was sent out there.
  */
 public final class TeleportGuard implements Listener {
 
@@ -27,7 +29,6 @@ public final class TeleportGuard implements Listener {
             TeleportCause.ENDER_PEARL,
             TeleportCause.CONSUMABLE_EFFECT,
             TeleportCause.NETHER_PORTAL,
-            TeleportCause.END_PORTAL,
             TeleportCause.END_GATEWAY);
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)

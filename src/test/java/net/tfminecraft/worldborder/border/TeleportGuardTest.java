@@ -74,7 +74,7 @@ class TeleportGuardTest {
 
     @ParameterizedTest
     @EnumSource(value = TeleportCause.class,
-            names = {"ENDER_PEARL", "CONSUMABLE_EFFECT", "NETHER_PORTAL", "END_PORTAL", "END_GATEWAY"})
+            names = {"ENDER_PEARL", "CONSUMABLE_EFFECT", "NETHER_PORTAL", "END_GATEWAY"})
     void playerTeleportsCannotLandInTheLethalBandOrPastTheBuffer(TeleportCause cause) {
         PlayerTeleportEvent intoBand = teleport(50, 300, cause);
         guard.onTeleport(intoBand);
@@ -96,8 +96,8 @@ class TeleportGuardTest {
 
     @ParameterizedTest
     @EnumSource(value = TeleportCause.class,
-            names = {"COMMAND", "PLUGIN", "SPECTATE", "DISMOUNT", "EXIT_BED", "UNKNOWN"})
-    void staffAndPluginTeleportsReachFarBuilds(TeleportCause cause) {
+            names = {"COMMAND", "PLUGIN", "SPECTATE", "DISMOUNT", "EXIT_BED", "UNKNOWN", "END_PORTAL"})
+    void staffPluginAndEndExitTeleportsReachFarBuilds(TeleportCause cause) {
         PlayerTeleportEvent event = teleport(50, 2000, cause);
         guard.onTeleport(event);
         assertFalse(event.isCancelled());

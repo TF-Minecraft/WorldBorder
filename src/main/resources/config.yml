@@ -29,9 +29,9 @@ worlds: []
 #                 safe for players teleported to them. Leave out or 0 for no
 #                 outer limit (the border reaches out forever).
 # Keep the lethal band (buffer-width - lethal-depth) wide, so no one can fly
-# across it between checks. Ender pearls, chorus fruit and portals can't land
-# a player in the lethal band or past the buffer (unless they are already past
-# it); staff and plugin teleports can.
+# across it between checks. Ender pearls, chorus fruit, Nether portals and End
+# gateways can't land a player in the lethal band or past the buffer (unless
+# they are already past it); staff and plugin teleports can.
 borders:
   # example_world:
   #   min-x: 0

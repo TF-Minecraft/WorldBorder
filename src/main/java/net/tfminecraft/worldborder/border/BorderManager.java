@@ -89,9 +89,13 @@ public final class BorderManager {
                     if (!player.isDead()) {
                         // Another plugin cancelled the death; don't let them walk on in the band.
                         Location safe = RespawnGuard.safeSpot(player.getWorld(), region);
-                        player.teleport(safe);
-                        plugin.getLogger().info("Moved " + player.getName() + " out of the lethal band to "
-                                + RespawnGuard.describe(player.getWorld(), safe) + " after their death was cancelled.");
+                        if (player.teleport(safe)) {
+                            plugin.getLogger().info("Moved " + player.getName() + " out of the lethal band to "
+                                    + RespawnGuard.describe(player.getWorld(), safe) + " after their death was cancelled.");
+                        } else {
+                            plugin.getLogger().warning("Could not move " + player.getName()
+                                    + " out of the lethal band after their death was cancelled.");
+                        }
                     }
                 }
                 case SAFE, BEYOND -> clearWarning(player);

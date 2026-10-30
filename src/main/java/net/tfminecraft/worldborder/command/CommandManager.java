@@ -68,6 +68,19 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
         player.sendMessage("§7Zone: " + formatZone(zone));
         player.sendMessage("§7Border: §fx " + region.minX + "-" + region.maxX
                 + ", z " + region.minZ + "-" + region.maxZ);
+        player.sendMessage("§7Buffer: §f" + describeBuffer(region));
+    }
+
+    private static String describeBuffer(Region region) {
+        boolean lethalBand = region.lethalDepth != Region.NO_LETHAL_DEPTH
+                && (region.bufferWidth == Region.ENDLESS_BUFFER || region.lethalDepth <= region.bufferWidth);
+        String lethal = lethalBand
+                ? "lethal from " + region.lethalDepth + " blocks out"
+                : "no lethal band";
+        String end = region.bufferWidth == Region.ENDLESS_BUFFER
+                ? "no outer limit"
+                : "ends " + region.bufferWidth + " blocks out";
+        return lethal + ", " + end;
     }
 
     private static String formatCoord(double value) {
@@ -82,6 +95,8 @@ public final class CommandManager implements CommandExecutor, TabCompleter {
             case SAFE -> "§aSAFE";
             case WARNING -> "§cWARNING";
             case OUTSIDE -> "§cOUTSIDE";
+            case LETHAL -> "§4LETHAL";
+            case BEYOND -> "§bBEYOND";
         };
     }
 

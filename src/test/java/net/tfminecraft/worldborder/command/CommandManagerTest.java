@@ -193,6 +193,41 @@ class CommandManagerTest {
         messages.verify(player).sendMessage("§7Position: §f" + position);
         messages.verify(player).sendMessage("§7Zone: " + zone);
         messages.verify(player).sendMessage("§7Border: §fx -100-100, z -100-100");
+        messages.verify(player).sendMessage("§7Buffer: §fno lethal band, no outer limit");
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "200, 100, 'no lethal band, ends 100 blocks out'",
+            "100, 100, 'lethal from 100 blocks out, ends 100 blocks out'",
+            "0, 0, 'lethal from 0 blocks out, no outer limit'"
+    })
+    void debugOnlyDescribesALethalBandThatCanHappen(int lethalDepth, int bufferWidth, String buffer) {
+        Cache.borders.put("world", new Region("world", -100, 100, -100, 100, lethalDepth, bufferWidth));
+        Player player = player("world", 0, 0);
+
+        assertTrue(execute(player, "debug"));
+
+        verify(player).sendMessage("§7Buffer: §f" + buffer);
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "150, '§cOUTSIDE'",
+            "160, '§4LETHAL'",
+            "300, '§4LETHAL'",
+            "300.5, '§bBEYOND'"
+    })
+    void debugReportsTheBufferBands(double x, String zone) {
+        Cache.borders.put("world", new Region("world", -100, 100, -100, 100, 60, 200));
+        Player player = player("world", x, 0);
+
+        assertTrue(execute(player, "debug"));
+
+        InOrder messages = inOrder(player);
+        messages.verify(player).sendMessage("§7Zone: " + zone);
+        messages.verify(player).sendMessage("§7Border: §fx -100-100, z -100-100");
+        messages.verify(player).sendMessage("§7Buffer: §flethal from 60 blocks out, ends 200 blocks out");
     }
 
     @Test

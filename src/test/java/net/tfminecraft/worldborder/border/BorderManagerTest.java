@@ -6,7 +6,9 @@ import static org.mockito.ArgumentMatchers.anyDouble;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.contains;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.never;
@@ -261,6 +263,86 @@ class BorderManagerTest {
         verify(dead, never()).resetTitle();
         verify(dead, never()).damage(anyDouble());
         verify(alive).damage(3.5);
+    }
+
+    @Test
+    void lethalBandKillsOutrightAndClearsTheWarning() {
+        Cache.borders.put("overworld", new Region("overworld", 0, 100, 0, 100, 50, 500));
+        Player player = playerAt(5, 50);
+        tick();
+
+        move(player, 120, 50);
+        tick();
+        verify(player).damage(3.5);
+        verify(player, never()).setHealth(anyDouble());
+
+        doAnswer(invocation -> {
+            when(player.isDead()).thenReturn(true);
+            return null;
+        }).when(player).setHealth(0);
+        move(player, 150, 50);
+        tick();
+        verify(player).setHealth(0);
+        verify(player, times(1)).damage(anyDouble());
+        verify(player, times(1)).resetTitle();
+        verify(player, never()).teleport(any(Location.class));
+    }
+
+    @Test
+    void cancelledDeathInTheLethalBandMovesThePlayerToTheWorldSpawn() {
+        Cache.borders.put("overworld", new Region("overworld", 0, 100, 0, 100, 50, 500));
+        Location spawn = new Location(world, 50, 64, 50);
+        when(world.getSpawnLocation()).thenReturn(spawn);
+        Player player = playerAt(150, 50);
+        when(player.getName()).thenReturn("Revived");
+        when(player.teleport(spawn)).thenReturn(true);
+
+        tick();
+
+        verify(player).setHealth(0);
+        verify(player).teleport(spawn);
+        verify(plugin.getLogger()).info(
+                "Moved Revived out of the lethal band to the spawn of overworld after their death was cancelled.");
+    }
+
+    @Test
+    void failedMoveAfterACancelledDeathIsReportedNotClaimed() {
+        Cache.borders.put("overworld", new Region("overworld", 0, 100, 0, 100, 50, 500));
+        when(world.getSpawnLocation()).thenReturn(new Location(world, 50, 64, 50));
+        Player player = playerAt(150, 50);
+        when(player.getName()).thenReturn("Stuck");
+
+        tick();
+
+        verify(plugin.getLogger()).warning("Could not move Stuck out of the lethal band after their death was cancelled.");
+        verify(plugin.getLogger(), never()).info(contains("Moved Stuck"));
+    }
+
+    @Test
+    void beyondTheBufferNothingHappensAndAnExistingWarningIsCleared() {
+        Cache.borders.put("overworld", new Region("overworld", 0, 100, 0, 100, 50, 500));
+        Player player = playerAt(5, 50);
+        tick();
+
+        move(player, 50, 700);
+        tick();
+        tick();
+        verify(player, times(1)).resetTitle();
+        verify(player, never()).damage(anyDouble());
+        verify(player, never()).setHealth(anyDouble());
+    }
+
+    @Test
+    void exemptPlayersAreNeverKilledInTheLethalBand() {
+        Cache.borders.put("overworld", new Region("overworld", 0, 100, 0, 100, 0, 500));
+        Player bypass = playerAt(200, 50);
+        when(bypass.hasPermission("worldborder.bypass")).thenReturn(true);
+        Player creative = playerAt(200, 50);
+        when(creative.getGameMode()).thenReturn(GameMode.CREATIVE);
+
+        tick();
+        verify(bypass, never()).setHealth(anyDouble());
+        verify(creative, never()).setHealth(anyDouble());
     }
 
     private Player playerAt(double x, double z) {

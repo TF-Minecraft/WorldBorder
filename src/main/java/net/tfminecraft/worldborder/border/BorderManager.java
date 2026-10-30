@@ -7,6 +7,7 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -80,7 +81,24 @@ public final class BorderManager {
                             15,
                             0);
                 }
-                case SAFE -> clearWarning(player);
+                case LETHAL -> {
+                    clearWarning(player);
+                    // Health straight to zero: no damage event, so armour, totems and
+                    // plugins that cancel damage can't carry anyone across the band.
+                    player.setHealth(0);
+                    if (!player.isDead()) {
+                        // Another plugin cancelled the death; don't let them walk on in the band.
+                        Location safe = RespawnGuard.safeSpot(player.getWorld(), region);
+                        if (player.teleport(safe)) {
+                            plugin.getLogger().info("Moved " + player.getName() + " out of the lethal band to "
+                                    + RespawnGuard.describe(player.getWorld(), safe) + " after their death was cancelled.");
+                        } else {
+                            plugin.getLogger().warning("Could not move " + player.getName()
+                                    + " out of the lethal band after their death was cancelled.");
+                        }
+                    }
+                }
+                case SAFE, BEYOND -> clearWarning(player);
             }
         }
     }
@@ -102,7 +120,7 @@ public final class BorderManager {
         }
     }
 
-    private boolean affects(Player player) {
+    static boolean affects(Player player) {
         GameMode mode = player.getGameMode();
         if (mode != GameMode.SURVIVAL && mode != GameMode.ADVENTURE) {
             return false;

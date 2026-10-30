@@ -9,6 +9,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import net.tfminecraft.worldborder.cache.Cache;
 import net.tfminecraft.worldborder.border.BorderManager;
+import net.tfminecraft.worldborder.border.RespawnGuard;
+import net.tfminecraft.worldborder.border.TeleportGuard;
 import net.tfminecraft.worldborder.command.CommandManager;
 import net.tfminecraft.worldborder.loader.ConfigLoader;
 
@@ -33,6 +35,8 @@ public class WorldBorder extends JavaPlugin {
         } else {
             getLogger().severe("Command 'worldborder' missing from plugin.yml");
         }
+        getServer().getPluginManager().registerEvents(new RespawnGuard(), this);
+        getServer().getPluginManager().registerEvents(new TeleportGuard(), this);
         borderManager.start();
         getLogger().info("WorldBorder enabled.");
     }
